@@ -8,6 +8,8 @@ enum CELL_TYPE {
 };
 
 extern "C" {
-	AIDLL_API void MouseAIAction(CELL_TYPE* board,int xBoardSize,int zBoardSize, float xMousePos, float zMousePos,float xCatPos,float zCatPos, int actionsSize, float* outActions);
+	AIDLL_API void MouseAIAction(CELL_TYPE* board,int* boardSize, float cellSize,float* cellOffset, float* mousePos, float* catPos, int actionsSize, float* outActions);
 }
+float getCellPosition();
+
 
