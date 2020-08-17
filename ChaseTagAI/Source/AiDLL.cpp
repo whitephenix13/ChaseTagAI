@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "Pch/pch.h"
 #include "AiDLL.h"
-#include "Astar.h"
+#include "Astar/Astar.h"
 #include <tgmath.h>
 float getCellPosition(float worldPos, int boardSize, float cellSize) {
     float offset = (boardSize + 1) % 2 / 2.0f;

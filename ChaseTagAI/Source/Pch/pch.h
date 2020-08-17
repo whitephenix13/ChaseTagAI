@@ -8,6 +8,6 @@
 #define PCH_H
 #define NOMINMAX
 // add headers that you want to pre-compile here
-#include "framework.h"
+#include "../Framework/framework.h"
 #include <Windows.h>
 #endif //PCH_H

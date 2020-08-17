@@ -36,61 +36,52 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AiDLL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Astar.h">
-      <Filter>Header Files\Astar</Filter>
-    </ClInclude>
-    <ClInclude Include="AstarNode.h">
-      <Filter>Header Files\Astar</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files\Pch</Filter>
-    </ClInclude>
-    <ClInclude Include="framework.h">
-      <Filter>Header Files\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="CellType.h">
-      <Filter>Header Files\Board</Filter>
-    </ClInclude>
-    <ClInclude Include="AstarNodeComparator.h">
-      <Filter>Header Files\Astar</Filter>
-    </ClInclude>
-    <ClInclude Include="BoardPositionConverter.h">
-      <Filter>Header Files\Board</Filter>
-    </ClInclude>
-    <ClInclude Include="AstarUtils.h">
-      <Filter>Header Files\Astar</Filter>
-    </ClInclude>
-    <ClInclude Include="HashIntPair.h">
-      <Filter>Header Files\Astar</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="AiDLL.cpp">
+    <ClCompile Include="Source\AiDLL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AstarNode.cpp">
-      <Filter>Source Files\Astar</Filter>
+    <ClCompile Include="Source\Board\BoardPositionConverter.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Astar.cpp">
-      <Filter>Source Files\Astar</Filter>
+    <ClCompile Include="Source\Astar\Astar.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files\Pch</Filter>
+    <ClCompile Include="Source\Astar\AstarNode.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AstarNodeComparator.cpp">
-      <Filter>Source Files\Astar</Filter>
+    <ClCompile Include="Source\Astar\AstarNodeComparator.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BoardPositionConverter.cpp">
-      <Filter>Source Files\Board</Filter>
-    </ClCompile>
-    <ClCompile Include="AstarUtils.cpp">
-      <Filter>Source Files\Astar</Filter>
+    <ClCompile Include="Source\Pch\pch.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="cpp.hint" />
+    <ClInclude Include="Source\AiDLL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Framework\framework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Board\BoardPositionConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Board\CellType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Astar\Astar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Astar\AstarNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Astar\AstarNodeComparator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Astar\HashIntPair.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pch\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

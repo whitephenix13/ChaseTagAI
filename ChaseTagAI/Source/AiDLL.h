@@ -1,7 +1,7 @@
 #pragma once
 #include <utility>
 #include <array>
-#include "CellType.h"
+#include "Board/CellType.h"
 #define AIDLL_API __declspec(dllexport) 
 
 

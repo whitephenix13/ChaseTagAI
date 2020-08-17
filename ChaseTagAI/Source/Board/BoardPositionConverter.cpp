@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "../Pch/pch.h"
 #include "BoardPositionConverter.h"
 #include <math.h>
 std::pair<int, int> BoardPositionConverter::cellPosToIndex(std::pair<float, float> pos, std::pair<int, int> boardSize, std::pair<float, float> offset) {

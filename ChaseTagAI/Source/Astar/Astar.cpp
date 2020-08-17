@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "../Pch/pch.h"
 #include "Astar.h"
 #include <functional>
-#include "BoardPositionConverter.h"
+#include "../Board/BoardPositionConverter.h"
 #include <limits>
 
 //TODO: unordered_map does not works with pair, either use a class or create custom hash https://www.tutorialspoint.com/how-to-create-an-unordered-map-of-pairs-in-cplusplus
@@ -69,7 +69,7 @@ namespace {
     }
 }
 
-bool Astar::findPath(std::pair<int,int> startCellIndex, std::pair<int, int> targetCellIndex, std::function<float(std::pair<int, int>&)> h, CELL_TYPE* board, std::pair<int, int> boardSize, std::vector<std::pair<int, int>*> outPath) {
+bool Astar::findPath(std::pair<int,int> startCellIndex, std::pair<int, int> targetCellIndex, std::function<float(const std::pair<int, int>&, const std::pair<int, int>&)> h, CELL_TYPE* board, std::pair<int, int> boardSize, std::vector<std::pair<int, int>*> outPath) {
 
     AstarNode startCell = AstarNode(startCellIndex);
     //Queue containing the node to expand by priority. The highest priority node can be retrieved easily
@@ -89,7 +89,7 @@ bool Astar::findPath(std::pair<int,int> startCellIndex, std::pair<int, int> targ
     // how short a path from start to finish can be if it goes through n.
     // fScore: = map with default value of Infinity
     std::unordered_map<std::pair<int, int>, float, hash_int_pair> fScore;
-    fScore.insert({ {startCellIndex, h(startCell.cellIndex)} });
+    fScore.insert({ {startCellIndex, h(startCell.cellIndex,targetCellIndex)} });
     while (!(openQueue.size()>0)) {
         // current : = the node in openSet having the lowest fScore[] value
         AstarNode current = openQueue.top();
@@ -130,7 +130,7 @@ bool Astar::findPath(std::pair<int,int> startCellIndex, std::pair<int, int> targ
                     insertGScoreInfo.first->second = tentative_gScore;
 
                 //fScore[neighbor] : = gScore[neighbor] + h(neighbor)
-                float fScoreNeighbor = tentative_gScore + h(neighborCopy.cellIndex);
+                float fScoreNeighbor = tentative_gScore + h(neighborCopy.cellIndex,targetCellIndex);
                 std::pair<std::unordered_map<std::pair<int, int>, float,hash_int_pair>::iterator, bool> insertFScoreInfo = fScore.insert(std::pair<std::pair<int, int>, float>(neighborCopy.cellIndex, fScoreNeighbor));
                 if (!insertFScoreInfo.second)
                     insertFScoreInfo.first->second = fScoreNeighbor;
