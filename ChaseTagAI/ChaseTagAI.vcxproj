@@ -152,11 +152,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AiDLL.h" />
+    <ClInclude Include="Astar.h" />
+    <ClInclude Include="AstarNode.h" />
+    <ClInclude Include="AstarNodeComparator.h" />
+    <ClInclude Include="AstarUtils.h" />
+    <ClInclude Include="BoardPositionConverter.h" />
+    <ClInclude Include="CellType.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="HashIntPair.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AiDLL.cpp" />
+    <ClCompile Include="Astar.cpp" />
+    <ClCompile Include="AstarNode.cpp" />
+    <ClCompile Include="AstarNodeComparator.cpp" />
+    <ClCompile Include="AstarUtils.cpp" />
+    <ClCompile Include="BoardPositionConverter.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

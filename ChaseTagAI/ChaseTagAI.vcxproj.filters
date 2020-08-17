@@ -13,24 +13,81 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Astar">
+      <UniqueIdentifier>{4adc8a5a-c775-4721-ba27-359a0084d7c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Astar">
+      <UniqueIdentifier>{4ff7ef58-795e-449c-956c-db61154201e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Framework">
+      <UniqueIdentifier>{cbea19d3-a45a-4082-a0c4-4fa2b8e06c9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Pch">
+      <UniqueIdentifier>{a51e6c34-5210-439d-80ff-6acf79f5bb10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Pch">
+      <UniqueIdentifier>{933bbc89-9e3c-4781-8a37-db978797571b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Board">
+      <UniqueIdentifier>{caf98f45-2153-402f-8973-750b44d878ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Board">
+      <UniqueIdentifier>{a97270be-3034-4705-8490-5366a8ac9c5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AiDLL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Astar.h">
+      <Filter>Header Files\Astar</Filter>
+    </ClInclude>
+    <ClInclude Include="AstarNode.h">
+      <Filter>Header Files\Astar</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files\Pch</Filter>
+    </ClInclude>
     <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="CellType.h">
+      <Filter>Header Files\Board</Filter>
+    </ClInclude>
+    <ClInclude Include="AstarNodeComparator.h">
+      <Filter>Header Files\Astar</Filter>
+    </ClInclude>
+    <ClInclude Include="BoardPositionConverter.h">
+      <Filter>Header Files\Board</Filter>
+    </ClInclude>
+    <ClInclude Include="AstarUtils.h">
+      <Filter>Header Files\Astar</Filter>
+    </ClInclude>
+    <ClInclude Include="HashIntPair.h">
+      <Filter>Header Files\Astar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AiDLL.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AstarNode.cpp">
+      <Filter>Source Files\Astar</Filter>
+    </ClCompile>
+    <ClCompile Include="Astar.cpp">
+      <Filter>Source Files\Astar</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files\Pch</Filter>
+    </ClCompile>
+    <ClCompile Include="AstarNodeComparator.cpp">
+      <Filter>Source Files\Astar</Filter>
+    </ClCompile>
+    <ClCompile Include="BoardPositionConverter.cpp">
+      <Filter>Source Files\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="AstarUtils.cpp">
+      <Filter>Source Files\Astar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
