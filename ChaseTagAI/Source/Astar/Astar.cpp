@@ -27,14 +27,16 @@ namespace {
     std::vector<std::pair<int, int>*> getNeighbors(std::pair<int, int> cellIndex, CELL_TYPE* board, std::pair<int, int> boardSize) {
         std::vector<std::pair<int, int>*> res;
 
-        //    -1,-1    0,-1    1,-1
-        //    -1,0  cellIndex  1,0
-        //    -1,1     0,1     1,1
+        //  +(-1,-1)   +(0,-1)  +(1,-1)
+        //  +(-1,0)  cellIndex  +(1,0)
+        //  +(-1,1)    +(0,1)   +(1,1)
         //
 
         //Handle direct neighbor cells: cells that are left,right,bottom and top of the current cell
         std::unordered_map<std::pair<int, int>, bool, hash_int_pair> cellValidMap;
-        std::pair<int, int> directNeighborCells[4] = { std::make_pair(-1,0),std::make_pair(0,-1),std::make_pair(1,0),std::make_pair(0,1) };
+        //direct neighbors are +(-1,0) +(0,-1) +(1,0) + (0,1)
+        std::pair<int, int> directNeighborCells[4] = { std::make_pair(-1 + cellIndex.first,0 + cellIndex.second),std::make_pair(0+cellIndex.first,-1 + cellIndex.second),
+            std::make_pair(1 + cellIndex.first,0+cellIndex.second),std::make_pair(0 + cellIndex.first,1 + cellIndex.second) };
         for (int i = 0; i < 4; ++i) {
             bool cellValidity = isCellValid(board, directNeighborCells[i], boardSize);
             cellValidMap.insert(std::make_pair(directNeighborCells[i], cellValidity));
@@ -42,7 +44,9 @@ namespace {
                 res.push_back(new std::pair<int, int>((directNeighborCells[i])));
         }
         //handle indirect cells: cells that are diagonal to the current cell
-        std::pair<int, int> indirectNeighborCells[4] = { std::make_pair(-1,-1),std::make_pair(1,-1),std::make_pair(1,1),std::make_pair(-1,1) };
+        //indirect neighbors are +(-1,-1) +(1,-1) +(1,1) + (-1,1)
+        std::pair<int, int> indirectNeighborCells[4] = { std::make_pair(-1 + cellIndex.first,-1 + cellIndex.second),std::make_pair(1 + cellIndex.first,-1 + cellIndex.second)
+            ,std::make_pair(1 + cellIndex.first,1 + cellIndex.second),std::make_pair(-1 + cellIndex.first,1 + cellIndex.second) };
         for (int i = 0; i < 4; ++i) {
             bool cellValidity = isCellValid(board, indirectNeighborCells[i], boardSize);
             //diagonal cell is valid if and only if the direct cells surrounding it are valid
@@ -51,25 +55,24 @@ namespace {
         }
         return res;
     }
-    std::vector<std::pair<int, int>*> reconstructPath(std::unordered_map<std::pair<int, int>, std::pair<int, int>, hash_int_pair> cameFrom, std::pair<int, int> endNode) {
-        std::vector<std::pair<int, int>*> reconstructedPath;
+     void reconstructPath(std::unordered_map<std::pair<int, int>, std::pair<int, int>, hash_int_pair> cameFrom, std::pair<int, int> endNode, std::vector<std::pair<int, int>>* outPath) {
         //Add the end node and create a new value so that it can be returned from the function
-        reconstructedPath.push_back(new std::pair<int, int>(endNode));
+         outPath->push_back(std::pair<int, int>(endNode));
 
         std::pair<int, int> currentNode = endNode;
         std::unordered_map<std::pair<int, int>, std::pair<int, int>, hash_int_pair>::iterator itrNextNode = cameFrom.find(currentNode);
         while (itrNextNode != cameFrom.end()) {
             currentNode = itrNextNode->second;
             //Add each node from the path and create a new value so that it can be returned from the function
-            reconstructedPath.push_back(new std::pair<int, int>(currentNode));
+            outPath->push_back(std::pair<int, int>(currentNode));
+            itrNextNode = cameFrom.find(currentNode);
         }
-
-        //The list is as followed [endNode, endNode-1, ..., startNode]. As we access element with pop_back, the order is correct and we don't need to reverse it
-        return reconstructedPath;
+        
+        //The output path is as followed [endNode, endNode-1, ..., startNode]. As we access element with pop_back, the order is correct and we don't need to reverse it
     }
 }
 
-bool Astar::findPath(std::pair<int,int> startCellIndex, std::pair<int, int> targetCellIndex, std::function<float(const std::pair<int, int>&, const std::pair<int, int>&)> h, CELL_TYPE* board, std::pair<int, int> boardSize, std::vector<std::pair<int, int>*> outPath) {
+bool Astar::findPath(std::pair<int,int> startCellIndex, std::pair<int, int> targetCellIndex, std::function<float(const std::pair<int, int>&, const std::pair<int, int>&)> h, CELL_TYPE* board, std::pair<int, int> boardSize, std::vector<std::pair<int, int>>* outPath) {
 
     AstarNode startCell = AstarNode(startCellIndex);
     //Queue containing the node to expand by priority. The highest priority node can be retrieved easily
@@ -90,7 +93,7 @@ bool Astar::findPath(std::pair<int,int> startCellIndex, std::pair<int, int> targ
     // fScore: = map with default value of Infinity
     std::unordered_map<std::pair<int, int>, float, hash_int_pair> fScore;
     fScore.insert({ {startCellIndex, h(startCell.cellIndex,targetCellIndex)} });
-    while (!(openQueue.size()>0)) {
+    while ((openQueue.size()>0)) {
         // current : = the node in openSet having the lowest fScore[] value
         AstarNode current = openQueue.top();
         openQueue.pop();//Actually removes the priority element
@@ -102,7 +105,7 @@ bool Astar::findPath(std::pair<int,int> startCellIndex, std::pair<int, int> targ
 
         std::pair<int,int> currentCellIndex =current.cellIndex;
         if ((currentCellIndex.first == targetCellIndex.first) && (currentCellIndex.second == targetCellIndex.second)) {
-            outPath= reconstructPath(cameFrom, current.cellIndex);
+            reconstructPath(cameFrom, current.cellIndex,outPath);
             return true;
         }
         std::vector<std::pair<int, int>*> neighbors = getNeighbors(currentCellIndex, board, boardSize);

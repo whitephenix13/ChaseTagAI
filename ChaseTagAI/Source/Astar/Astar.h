@@ -12,7 +12,7 @@
 
 
 namespace Astar {
-	bool findPath(std::pair<int, int> startCellIndex, std::pair<int, int> targetCellIndex, std::function<float(const std::pair<int, int>&, const std::pair<int, int>&)> h, CELL_TYPE* board, std::pair<int, int> boardSize, std::vector<std::pair<int, int>*> outPath);
+	bool findPath(std::pair<int, int> startCellIndex, std::pair<int, int> targetCellIndex, std::function<float(const std::pair<int, int>&, const std::pair<int, int>&)> h, CELL_TYPE* board, std::pair<int, int> boardSize, std::vector<std::pair<int, int>>* outPath);
 };
 
 
