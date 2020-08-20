@@ -49,8 +49,9 @@ namespace {
             ,std::make_pair(1 + cellIndex.first,1 + cellIndex.second),std::make_pair(-1 + cellIndex.first,1 + cellIndex.second) };
         for (int i = 0; i < 4; ++i) {
             bool cellValidity = isCellValid(board, indirectNeighborCells[i], boardSize);
+
             //diagonal cell is valid if and only if the direct cells surrounding it are valid
-            if (cellValidity && (cellValidMap.find(directNeighborCells[i]) != cellValidMap.end()) && (cellValidMap.find(directNeighborCells[(i + 1) % 4]) != cellValidMap.end()))
+            if (cellValidity && (cellValidMap.find(directNeighborCells[i])->second) && (cellValidMap.find(directNeighborCells[(i + 1) % 4])->second))
                 res.push_back(new std::pair<int, int>(indirectNeighborCells[i]));
         }
         return res;
