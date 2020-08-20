@@ -9,6 +9,6 @@ std::pair<float, float> BoardPositionConverter::cellIndexToPos(std::pair<int, in
 	return  std::make_pair((index.first + offset.first) - boardSize.first / 2, (index.second + offset.second) - boardSize.second / 2);
 }
 
-CELL_TYPE BoardPositionConverter::cellTypeAt(CELL_TYPE* board, int x, int y, std::pair<int, int> boardSize) {
-	return board[x * boardSize.second + y];
+CELL_TYPE BoardPositionConverter::cellTypeAt(CELL_TYPE* board, int line, int column, std::pair<int, int> boardSize) {
+	return board[line * boardSize.second + column];
 }
