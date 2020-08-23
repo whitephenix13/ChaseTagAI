@@ -33,13 +33,13 @@ namespace {
         //
 
         //Handle direct neighbor cells: cells that are left,right,bottom and top of the current cell
-        std::unordered_map<std::pair<int, int>, bool, hash_int_pair> cellValidMap;
+        bool* cellValidArray = new bool[4];
         //direct neighbors are +(-1,0) +(0,-1) +(1,0) + (0,1)
         std::pair<int, int> directNeighborCells[4] = { std::make_pair(-1 + cellIndex.first,0 + cellIndex.second),std::make_pair(0+cellIndex.first,-1 + cellIndex.second),
             std::make_pair(1 + cellIndex.first,0+cellIndex.second),std::make_pair(0 + cellIndex.first,1 + cellIndex.second) };
         for (int i = 0; i < 4; ++i) {
             bool cellValidity = isCellValid(board, directNeighborCells[i], boardSize);
-            cellValidMap.insert(std::make_pair(directNeighborCells[i], cellValidity));
+            cellValidArray[i]= cellValidity;
             if (cellValidity)
                 res.push_back(new std::pair<int, int>((directNeighborCells[i])));
         }
@@ -51,9 +51,10 @@ namespace {
             bool cellValidity = isCellValid(board, indirectNeighborCells[i], boardSize);
 
             //diagonal cell is valid if and only if the direct cells surrounding it are valid
-            if (cellValidity && (cellValidMap.find(directNeighborCells[i])->second) && (cellValidMap.find(directNeighborCells[(i + 1) % 4])->second))
+            if (cellValidity && cellValidArray[i] && cellValidArray[(i + 1) % 4])
                 res.push_back(new std::pair<int, int>(indirectNeighborCells[i]));
         }
+        delete[] cellValidArray;
         return res;
     }
      void reconstructPath(std::unordered_map<std::pair<int, int>, std::pair<int, int>, hash_int_pair> cameFrom, std::pair<int, int> endNode, std::vector<std::pair<int, int>>* outPath) {
