@@ -54,6 +54,15 @@
     <ClCompile Include="Source\Pch\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AstarDataOriented\AstarDataOriented.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AstarDataOriented\AstarNodeDataOriented.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AstarDataOriented\AstarNodeComparatorDataOriented.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AiDLL.h">
@@ -77,10 +86,22 @@
     <ClInclude Include="Source\Astar\AstarNodeComparator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Astar\HashIntPair.h">
+    <ClInclude Include="Source\Pch\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Pch\pch.h">
+    <ClInclude Include="Source\AstarDataOriented\AstarDataOriented.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Astar\HashPairInt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AstarDataOriented\HashPairofPairInt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AstarDataOriented\AstarNodeDataOriented.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AstarDataOriented\AstarNodeComparatorDataOriented.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

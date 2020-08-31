@@ -20,6 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AiDLL.cpp" />
+    <ClCompile Include="Source\AstarDataOriented\AstarDataOriented.cpp" />
+    <ClCompile Include="Source\AstarDataOriented\AstarNodeComparatorDataOriented.cpp" />
+    <ClCompile Include="Source\AstarDataOriented\AstarNodeDataOriented.cpp" />
     <ClCompile Include="Source\Astar\Astar.cpp" />
     <ClCompile Include="Source\Astar\AstarNode.cpp" />
     <ClCompile Include="Source\Astar\AstarNodeComparator.cpp" />
@@ -31,10 +34,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AiDLL.h" />
+    <ClInclude Include="Source\AstarDataOriented\AstarDataOriented.h" />
+    <ClInclude Include="Source\AstarDataOriented\AstarNodeComparatorDataOriented.h" />
+    <ClInclude Include="Source\AstarDataOriented\AstarNodeDataOriented.h" />
+    <ClInclude Include="Source\AstarDataOriented\HashPairofPairInt.h" />
     <ClInclude Include="Source\Astar\Astar.h" />
     <ClInclude Include="Source\Astar\AstarNode.h" />
     <ClInclude Include="Source\Astar\AstarNodeComparator.h" />
-    <ClInclude Include="Source\Astar\HashIntPair.h" />
+    <ClInclude Include="Source\Astar\HashPairInt.h" />
     <ClInclude Include="Source\Board\BoardPositionConverter.h" />
     <ClInclude Include="Source\Board\CellType.h" />
     <ClInclude Include="Source\Framework\framework.h" />
