@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include "AstarNodeComparatorDataOriented.h"
 #include <iostream>
+#include <bitset>
 
 
 //Represents the index of a cell of the board. Starts at 0 for (0,0) and then increase by moving line by line (1 for(0,1) , boardsize.second for (1,0), ...)
@@ -72,17 +73,17 @@ namespace {
         }
     }
   
-    void reconstructPath(std::unordered_map<CellIndex, CellIndex> cameFrom, CellIndex endNode, std::pair<int, int> boardSize, std::vector<std::pair<int, int>>* outPath) {
+    void reconstructPath(const CellIndex* cameFrom, CellIndex endNode, std::pair<int, int> boardSize, std::vector<std::pair<int, int>>* outPath) {
         //Add the end node and create a new value so that it can be returned from the function
         outPath->push_back(IndexToCell(endNode,boardSize));
 
         CellIndex currentNode = endNode;
-        std::unordered_map<CellIndex, CellIndex>::iterator itrNextNode = cameFrom.find(currentNode);
-        while (itrNextNode != cameFrom.end()) {
-            currentNode = itrNextNode->second;
+        CellIndex nextNode = cameFrom[currentNode];
+        while (nextNode!= -1) {
+            currentNode = nextNode;
             //Add each node from the path and create a new value so that it can be returned from the function
             outPath->push_back(IndexToCell(currentNode, boardSize));
-            itrNextNode = cameFrom.find(currentNode);
+            nextNode = cameFrom[currentNode];
         }
 
         //The output path is as followed [endNode, endNode-1, ..., startNode]. As we access element with pop_back, the order is correct and we don't need to reverse it
@@ -93,25 +94,24 @@ bool AstarDataOriented::findPath(std::pair<int, int> startCell, std::pair<int, i
 	
 
     const int MAX_CELL_INDEX = boardSize.first * boardSize.second;
-    
-    std::unordered_map<CellIndex, float> heuristicMap;
+    float* heuristicArray= new float[MAX_CELL_INDEX];
+    CellIndex** directNeighborsArray = new CellIndex* [MAX_CELL_INDEX];
+    CellIndex** diagonalNeighborsArray = new CellIndex* [MAX_CELL_INDEX];
 
-    std::unordered_map<CellIndex, CellIndex*> directNeighborsMap;
-    std::unordered_map<CellIndex, CellIndex*> diagonalNeighborsMap;
     //Precompute heuristics
     for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
-        heuristicMap.insert(std::make_pair(ind, h(IndexToCell(ind,boardSize), targetCell)));
+        heuristicArray[ind] = h(IndexToCell(ind, boardSize), targetCell);
     }
     //precompute distances
-    float distanceArray[2]{ 1,sqrt(2) };//distance between adjacent cells and diagonal cells
+    double distanceArray[2]{ 1,sqrt(2) };//distance between adjacent cells and diagonal cells
 
     //Precompute neighboors
     for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
         CellIndex* directNeighbors= new CellIndex[4]();
         CellIndex* diagonalNeighbors = new CellIndex[4]();
         getNeighborsAsArray(ind, board, boardSize, directNeighbors, diagonalNeighbors);
-        directNeighborsMap.insert(std::make_pair(ind, directNeighbors));
-        diagonalNeighborsMap.insert(std::make_pair(ind, diagonalNeighbors));
+        directNeighborsArray[ind] = directNeighbors;
+        diagonalNeighborsArray[ind] = diagonalNeighbors;  
     }
 
     int startCellIndex = CellToIndex(startCell, boardSize);
@@ -122,50 +122,53 @@ bool AstarDataOriented::findPath(std::pair<int, int> startCell, std::pair<int, i
     //Add the starting point to the list of node to expand
     openQueue.push(startCellNode);
     //Set containing the node that we already visited once (those node should be ignored if found in the open set)
-    std::unordered_set<CellIndex> closedSet;
+    bool* closedSetArray= new bool[MAX_CELL_INDEX];//This could be optimized using a dynamic bitset but readability is worst
+    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) 
+        closedSetArray[ind] = false;
     //cameFrom[Node] represents the node immediately preceding it on the cheapest path from start
     // to node currently known.
-    std::unordered_map<CellIndex, CellIndex> cameFrom;
+    CellIndex* cameFromArray= new CellIndex[MAX_CELL_INDEX];
+    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind)
+        cameFromArray[ind] = -1;
     // For node n, gScore[n] is the cost of the cheapest path from start to n currently known.
-    std::unordered_map<CellIndex, float> gScore;
+    float* gScoreArray = new float[MAX_CELL_INDEX];
+    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind)
+        gScoreArray[ind] = std::numeric_limits<float>::infinity();
+   
     // gScore : = map with default value of Infinity
-    gScore.insert({ {startCellIndex, 0} });
+    gScoreArray[startCellIndex] = 0;
+
     // For node n, fScore[n] := gScore[n] + h(n). fScore[n] represents our current best guess as to
     // how short a path from start to finish can be if it goes through n.
     // fScore: = map with default value of Infinity
-    std::unordered_map<CellIndex, float> fScore;
-    fScore.insert({ {startCellIndex, heuristicMap.find(startCellIndex)->second} });
+    float* fScoreArray = new float[MAX_CELL_INDEX];
+    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind)
+        fScoreArray[ind] = std::numeric_limits<float>::infinity();
+    fScoreArray[startCellIndex] = heuristicArray[startCellIndex];
 
     AstarNodeDataOriented current;
-    AstarNodeDataOriented neighborCopy;
-    //std::vector<CellIndex>* neighbors = new std::vector<CellIndex>();
     CellIndex* neighbors;
 
     float tentative_gScore;
     float neighbor_gScore;
-    float fScoreNeighbor;
-    std::unordered_map<CellIndex, float>::iterator neighbor_gScoreItr;
-    std::pair<std::unordered_map<CellIndex, CellIndex>::iterator, bool> insertCameFromInfo;
-    std::pair<std::unordered_map<CellIndex, float>::iterator, bool> insertGScoreInfo;
-    std::pair<std::unordered_map<CellIndex, float>::iterator, bool> insertFScoreInfo;
     while ((openQueue.size() > 0)) {
         // current : = the node in openSet having the lowest fScore[] value
         current = openQueue.top();
         openQueue.pop();//Actually removes the priority element
         //Only iterate on elements that are not in the closed set
-        if (closedSet.find(current.cellIndex) != closedSet.end())
+        if (closedSetArray[current.cellIndex])
             continue;
         //Finally add the current node to the closed set as we don't want to explore it once again
-        closedSet.insert(current.cellIndex);
+        closedSetArray[current.cellIndex]=true;
 
         current.cellIndex = current.cellIndex;
         if (current.cellIndex == targetCellIndex) {
-            reconstructPath(cameFrom, current.cellIndex,boardSize, outPath);
+            reconstructPath(cameFromArray, current.cellIndex,boardSize, outPath);
             return true;
         }
 
         for (int neighborTypeIndex = 0; neighborTypeIndex < 2; ++neighborTypeIndex) {
-            neighbors = (neighborTypeIndex ==0? directNeighborsMap : diagonalNeighborsMap).find(current.cellIndex)->second;
+            neighbors = (neighborTypeIndex ==0? directNeighborsArray : diagonalNeighborsArray)[current.cellIndex];
             for (int i = 0; i < 4;++i) {
                 CellIndex neighbor = neighbors[i];
                 //only keep valid neighbors
@@ -174,42 +177,40 @@ bool AstarDataOriented::findPath(std::pair<int, int> startCell, std::pair<int, i
                 // distance(current,neighbor) is the weight of the edge from current to neighbor
 
                 // tentative_gScore is the distance from start to the neighbor through current
-                tentative_gScore = gScore.find(current.cellIndex)->second + distanceArray[neighborTypeIndex];
-                neighbor_gScore = std::numeric_limits<float>::max();
-                neighbor_gScoreItr = gScore.find(neighbor);
-                if (neighbor_gScoreItr != gScore.end())
-                    neighbor_gScore = neighbor_gScoreItr->second;
+                tentative_gScore = gScoreArray[current.cellIndex] + distanceArray[neighborTypeIndex];
+                neighbor_gScore = gScoreArray[neighbor];
                 if (tentative_gScore < neighbor_gScore) {
                     // This path to neighbor is better than any previous one. Record it!
 
                     //cameFrom[neighbor] : = current
-                    insertCameFromInfo = cameFrom.insert(std::pair<int, int>(neighbor, current.cellIndex));
-                    if (!insertCameFromInfo.second)
-                        insertCameFromInfo.first->second = current.cellIndex;
+                    cameFromArray[neighbor] = current.cellIndex;
 
                     // gScore[neighbor] : = tentative_gScore
-                    insertGScoreInfo = gScore.insert(std::pair<CellIndex, float>(neighbor, tentative_gScore));
-                    if (!insertGScoreInfo.second)
-                        insertGScoreInfo.first->second = tentative_gScore;
+                    gScoreArray[neighbor] = tentative_gScore;
 
                     //fScore[neighbor] : = gScore[neighbor] + h(neighbor)
-                    fScoreNeighbor = tentative_gScore + heuristicMap.find(neighbor)->second;
-                    insertFScoreInfo = fScore.insert(std::pair<CellIndex, float>(neighbor, fScoreNeighbor));
-                    if (!insertFScoreInfo.second)
-                        insertFScoreInfo.first->second = fScoreNeighbor;
+                    fScoreArray[neighbor] = tentative_gScore + heuristicArray[neighbor];
 
                     //We add the element to the open set regardless of whether it already exists.
                     //This also means that when poping an element from the open set, we have to check if it is not in the closed set 
-                    neighborCopy.totalCost = fScoreNeighbor;
-                    openQueue.push(AstarNodeDataOriented(neighbor));
+                    AstarNodeDataOriented neighborNode(neighbor);
+                    neighborNode.totalCost = fScoreArray[neighbor];
+                    openQueue.push(neighborNode);
                 }
             }
         }
     }
-    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
-        delete[] directNeighborsMap.find(ind)->second;
-        delete[] diagonalNeighborsMap.find(ind)->second;
-    }
+
+    delete[] heuristicArray;
+    delete[] closedSetArray;
+    delete[] cameFromArray;
+
+    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) 
+        delete[] directNeighborsArray[ind];
+    
+    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind)
+        delete[] diagonalNeighborsArray[ind];
+
     // Open set is empty but goal was never reached
     return false;
 
