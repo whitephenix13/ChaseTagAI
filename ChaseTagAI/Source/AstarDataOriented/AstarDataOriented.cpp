@@ -29,19 +29,19 @@ namespace {
         return CellPairToIndex(CellToIndex(cell1, boardSize), CellToIndex(cell2, boardSize),boardSize);
     }
 
-    const std::pair<int,int> IndexToCell(const CellIndex cellIndex, const std::pair<int, int>& boardSize) {
+    const std::pair<int,int> IndexToCell(const CellIndex& cellIndex, const std::pair<int, int>& boardSize) {
         return std::make_pair<int, int>(cellIndex / boardSize.second, cellIndex % boardSize.second);
     }
-    const std::pair<std::pair<int, int>, std::pair<int, int>> IndexToCellPair(const CellPairIndex cellPairIndex, const std::pair<int, int>& boardSize) {
+    const std::pair<std::pair<int, int>, std::pair<int, int>> IndexToCellPair(const CellPairIndex& cellPairIndex, const std::pair<int, int>& boardSize) {
         int cell1Index = cellPairIndex % (boardSize.first * boardSize.second);
         int cell2Index = cellPairIndex / (boardSize.first * boardSize.second);
         return std::pair<std::pair<int, int>, std::pair<int, int>>(IndexToCell(cell1Index, boardSize), IndexToCell(cell2Index, boardSize));
     }
-    inline const float distance(std::pair<int, int> node1, std::pair<int, int> node2) {
+    inline const float distance(std::pair<int, int>& node1, std::pair<int, int>& node2) {
         return sqrt(pow(node1.first - node2.first, 2) + pow(node1.second - node2.second, 2));
     }
 
-    void getNeighborsAsArray(CellIndex cellIndex, CELL_TYPE* board, std::pair<int, int> boardSize, CellIndex* outDirectNeighbors, CellIndex* outDiagonalNeighbors) {
+    void getNeighborsAsArray(const CellIndex& cellIndex, const CELL_TYPE* board, const std::pair<int, int>& boardSize, CellIndex* outDirectNeighbors, CellIndex* outDiagonalNeighbors) {
         //Handle direct neighbor cells: cells that are left,right,bottom and top of the current cell
         bool cellValidArray[8];
         //left, top, right, bottom, top left, top right, bottom right, bottom left
@@ -73,7 +73,7 @@ namespace {
         }
     }
   
-    void reconstructPath(const CellIndex* cameFrom, CellIndex endNode, std::pair<int, int> boardSize, std::vector<std::pair<int, int>>* outPath) {
+    void reconstructPath(const CellIndex* cameFrom, const CellIndex& endNode, const std::pair<int, int>& boardSize, std::vector<std::pair<int, int>>* outPath) {
         //Add the end node and create a new value so that it can be returned from the function
         outPath->push_back(IndexToCell(endNode,boardSize));
 
@@ -88,30 +88,66 @@ namespace {
 
         //The output path is as followed [endNode, endNode-1, ..., startNode]. As we access element with pop_back, the order is correct and we don't need to reverse it
     }
+
+    void releaseMemory(int MAX_CELL_INDEX,CellIndex* neighbors,float* heuristicArray, float* gScoreArray, float* fScoreArray, bool* closedSetArray, CellIndex* cameFromArray
+        , CellIndex** directNeighborsArray, CellIndex** diagonalNeighborsArray) {
+        delete neighbors;
+        neighbors = nullptr;
+        delete[] heuristicArray;
+        heuristicArray = nullptr;
+        delete[] gScoreArray;
+        gScoreArray = nullptr;
+        delete[] fScoreArray;
+        fScoreArray = nullptr;
+        delete[] closedSetArray;
+        closedSetArray = nullptr;
+        delete[] cameFromArray;
+        cameFromArray = nullptr;
+
+
+        for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
+            delete[] directNeighborsArray[ind];
+            directNeighborsArray[ind] = nullptr;
+        }
+        delete[] directNeighborsArray;
+        directNeighborsArray = nullptr;
+
+        for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
+            //TODO: error using delete with ind close to 1150 ...
+            delete[] diagonalNeighborsArray[ind];
+            diagonalNeighborsArray[ind] = nullptr;
+        }
+        delete[] diagonalNeighborsArray;
+        diagonalNeighborsArray = nullptr;
+    }
 }
 
-bool AstarDataOriented::findPath(std::pair<int, int> startCell, std::pair<int, int> targetCell, std::function<float(const std::pair<int, int>&, const std::pair<int, int>&)> h, CELL_TYPE* board, std::pair<int, int> boardSize, std::vector<std::pair<int, int>>* outPath) {
+bool AstarDataOriented::findPath(const std::pair<int, int>& startCell, const std::pair<int, int>& targetCell, const std::function<float(const std::pair<int, int>&, const std::pair<int, int>&)> h, const CELL_TYPE* board, const std::pair<int, int>& boardSize, std::vector<std::pair<int, int>>* outPath) {
 	
 
     const int MAX_CELL_INDEX = boardSize.first * boardSize.second;
     float* heuristicArray= new float[MAX_CELL_INDEX];
     CellIndex** directNeighborsArray = new CellIndex* [MAX_CELL_INDEX];
+    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
+        directNeighborsArray[ind] = new CellIndex[4]();
+    }
     CellIndex** diagonalNeighborsArray = new CellIndex* [MAX_CELL_INDEX];
+    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
+        diagonalNeighborsArray[ind] = new CellIndex[4]();
+    }
+    //precompute distances
+    //distance between two neighbors: [0] for direct neighbors, [1] for diagonal
+    double distanceArray[2]{ 1,sqrt(2) };
 
     //Precompute heuristics
     for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
         heuristicArray[ind] = h(IndexToCell(ind, boardSize), targetCell);
     }
-    //precompute distances
-    double distanceArray[2]{ 1,sqrt(2) };//distance between adjacent cells and diagonal cells
 
     //Precompute neighboors
+
     for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
-        CellIndex* directNeighbors= new CellIndex[4]();
-        CellIndex* diagonalNeighbors = new CellIndex[4]();
-        getNeighborsAsArray(ind, board, boardSize, directNeighbors, diagonalNeighbors);
-        directNeighborsArray[ind] = directNeighbors;
-        diagonalNeighborsArray[ind] = diagonalNeighbors;  
+        getNeighborsAsArray(ind, board, boardSize, directNeighborsArray[ind], diagonalNeighborsArray[ind]);
     }
 
     int startCellIndex = CellToIndex(startCell, boardSize);
@@ -121,6 +157,7 @@ bool AstarDataOriented::findPath(std::pair<int, int> startCell, std::pair<int, i
     std::priority_queue<AstarNodeDataOriented, std::vector<AstarNodeDataOriented>, AstarNodeComparatorDataOriented> openQueue;
     //Add the starting point to the list of node to expand
     openQueue.push(startCellNode);
+
     //Set containing the node that we already visited once (those node should be ignored if found in the open set)
     bool* closedSetArray= new bool[MAX_CELL_INDEX];//This could be optimized using a dynamic bitset but readability is worst
     for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) 
@@ -147,7 +184,7 @@ bool AstarDataOriented::findPath(std::pair<int, int> startCell, std::pair<int, i
     fScoreArray[startCellIndex] = heuristicArray[startCellIndex];
 
     AstarNodeDataOriented current;
-    CellIndex* neighbors;
+    CellIndex* neighbors =nullptr;
 
     float tentative_gScore;
     float neighbor_gScore;
@@ -155,6 +192,7 @@ bool AstarDataOriented::findPath(std::pair<int, int> startCell, std::pair<int, i
         // current : = the node in openSet having the lowest fScore[] value
         current = openQueue.top();
         openQueue.pop();//Actually removes the priority element
+
         //Only iterate on elements that are not in the closed set
         if (closedSetArray[current.cellIndex])
             continue;
@@ -164,6 +202,7 @@ bool AstarDataOriented::findPath(std::pair<int, int> startCell, std::pair<int, i
         current.cellIndex = current.cellIndex;
         if (current.cellIndex == targetCellIndex) {
             reconstructPath(cameFromArray, current.cellIndex,boardSize, outPath);
+            releaseMemory(MAX_CELL_INDEX, neighbors, heuristicArray, gScoreArray, fScoreArray, closedSetArray, cameFromArray, directNeighborsArray, diagonalNeighborsArray);
             return true;
         }
 
@@ -193,6 +232,7 @@ bool AstarDataOriented::findPath(std::pair<int, int> startCell, std::pair<int, i
 
                     //We add the element to the open set regardless of whether it already exists.
                     //This also means that when poping an element from the open set, we have to check if it is not in the closed set 
+
                     AstarNodeDataOriented neighborNode(neighbor);
                     neighborNode.totalCost = fScoreArray[neighbor];
                     openQueue.push(neighborNode);
@@ -201,17 +241,10 @@ bool AstarDataOriented::findPath(std::pair<int, int> startCell, std::pair<int, i
         }
     }
 
-    delete[] heuristicArray;
-    delete[] closedSetArray;
-    delete[] cameFromArray;
-
-    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) 
-        delete[] directNeighborsArray[ind];
+    releaseMemory(MAX_CELL_INDEX, neighbors, heuristicArray, gScoreArray, fScoreArray, closedSetArray, cameFromArray, directNeighborsArray, diagonalNeighborsArray);
     
-    for (int ind = 0; ind < MAX_CELL_INDEX; ++ind)
-        delete[] diagonalNeighborsArray[ind];
-
     // Open set is empty but goal was never reached
     return false;
 
 }
+

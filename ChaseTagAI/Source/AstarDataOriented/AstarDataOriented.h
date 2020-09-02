@@ -4,5 +4,6 @@
 #include <functional>
 #include <vector>
 namespace AstarDataOriented {
-	bool findPath(std::pair<int, int> startCellIndex, std::pair<int, int> targetCellIndex, std::function<float(const std::pair<int, int>&, const std::pair<int, int>&)> h, CELL_TYPE* board, std::pair<int, int> boardSize, std::vector<std::pair<int, int>>* outPath);
+	bool findPath(const std::pair<int, int>& startCell, const std::pair<int, int>& targetCell, const std::function<float(const std::pair<int, int>&, const std::pair<int, int>&)> h, const CELL_TYPE* board, const std::pair<int, int>& boardSize, std::vector<std::pair<int, int>>* outPath);
+
 };
