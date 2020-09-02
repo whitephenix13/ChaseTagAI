@@ -91,8 +91,7 @@ namespace {
 
     void releaseMemory(int MAX_CELL_INDEX,CellIndex* neighbors,float* heuristicArray, float* gScoreArray, float* fScoreArray, bool* closedSetArray, CellIndex* cameFromArray
         , CellIndex** directNeighborsArray, CellIndex** diagonalNeighborsArray) {
-        delete neighbors;
-        neighbors = nullptr;
+
         delete[] heuristicArray;
         heuristicArray = nullptr;
         delete[] gScoreArray;
@@ -104,14 +103,13 @@ namespace {
         delete[] cameFromArray;
         cameFromArray = nullptr;
 
-
         for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
             delete[] directNeighborsArray[ind];
             directNeighborsArray[ind] = nullptr;
         }
         delete[] directNeighborsArray;
         directNeighborsArray = nullptr;
-
+            
         for (int ind = 0; ind < MAX_CELL_INDEX; ++ind) {
             //TODO: error using delete with ind close to 1150 ...
             delete[] diagonalNeighborsArray[ind];
@@ -119,6 +117,8 @@ namespace {
         }
         delete[] diagonalNeighborsArray;
         diagonalNeighborsArray = nullptr;
+
+        neighbors = nullptr;
     }
 }
 
