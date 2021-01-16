@@ -4,15 +4,8 @@
 #include "../Board/BoardPositionConverter.h"
 #include <limits>
 
-//TODO: unordered_map does not works with pair, either use a class or create custom hash https://www.tutorialspoint.com/how-to-create-an-unordered-map-of-pairs-in-cplusplus
-//TODO: se renseigner sur https://www.codeproject.com/Articles/1083210/An-Efficient-Cplusplus-Fixed-Block-Memory-Allocato
-//TODO: need to find a class (create one?) that is a priority queue (for finding min value efficiently) but also that can 1) check existence of element and update its g/f score in the open set
-//TODO: reference for implementation
-//TODO: try with precomputation of distance to avoid cache miss
-//TODO: try to avoid using classs when not necessary 
 /*
 Need algorithm that converts double index to single index 
-
 */
 //Anonymous namespace to hide local helper functions
 namespace {

@@ -63,6 +63,12 @@
     <ClCompile Include="Source\AstarDataOriented\AstarNodeComparatorDataOriented.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Actions\ActionHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Strategy\PathFinding\FleePathFinding.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AiDLL.h">
@@ -102,6 +108,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\AstarDataOriented\AstarNodeComparatorDataOriented.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actions\ActionHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Strategy\PathFinding\FleePathFinding.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

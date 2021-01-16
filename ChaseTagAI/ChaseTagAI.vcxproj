@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Actions\ActionHandler.cpp" />
     <ClCompile Include="Source\AiDLL.cpp" />
     <ClCompile Include="Source\AstarDataOriented\AstarDataOriented.cpp" />
     <ClCompile Include="Source\AstarDataOriented\AstarNodeComparatorDataOriented.cpp" />
@@ -31,8 +32,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Strategy\PathFinding\FleePathFinding.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Actions\ActionHandler.h" />
     <ClInclude Include="Source\AiDLL.h" />
     <ClInclude Include="Source\AstarDataOriented\AstarDataOriented.h" />
     <ClInclude Include="Source\AstarDataOriented\AstarNodeComparatorDataOriented.h" />
@@ -46,6 +49,7 @@
     <ClInclude Include="Source\Board\CellType.h" />
     <ClInclude Include="Source\Framework\framework.h" />
     <ClInclude Include="Source\Pch\pch.h" />
+    <ClInclude Include="Source\Strategy\PathFinding\FleePathFinding.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

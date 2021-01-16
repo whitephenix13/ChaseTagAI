@@ -10,9 +10,9 @@ AstarNodeDataOriented::AstarNodeDataOriented(const AstarNodeDataOriented& copy) 
 	this->cellIndex = copy.cellIndex;
 	this->totalCost = copy.totalCost;
 }
-AstarNodeDataOriented::AstarNodeDataOriented(int cellIndex) {
+AstarNodeDataOriented::AstarNodeDataOriented(int cellIndex, float totalCost) {
 	this->cellIndex = cellIndex;
-	totalCost = 0;
+	this->totalCost = totalCost;
 }
 
 // the top of the priority queue is the greatest element by default,

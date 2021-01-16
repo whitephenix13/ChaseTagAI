@@ -6,7 +6,7 @@ public:
     float totalCost;
     AstarNodeDataOriented();
     AstarNodeDataOriented(const AstarNodeDataOriented& copy);
-    AstarNodeDataOriented(int cellIndex);
+    AstarNodeDataOriented(int cellIndex, float totalCost);
     // the top of the priority queue is the greatest element by default,
 // but we want the smallest, so flip the sign
     bool operator < (const AstarNodeDataOriented&);
